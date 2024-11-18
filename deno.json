@@ -1,4 +1,5 @@
 {
+  "nodeModulesDir": "auto",
   "tasks": {
     "dev": "deno run -A build.config.ts --watch",
     "build-production": "deno run -A build.config.ts --prod"
