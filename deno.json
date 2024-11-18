@@ -1,0 +1,22 @@
+{
+  "tasks": {
+    "dev": "deno run -A build.config.ts --watch",
+    "build-production": "deno run -A build.config.ts --prod"
+  },
+  "compilerOptions": {
+    "lib": ["deno.ns", "dom", "esnext"],
+    "types": ["./types/chrome.d.ts"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "imports": {
+    "@std/fs": "jsr:@std/fs@1",
+    "vite": "npm:vite@5.1.4",
+    "@vitejs/plugin-react": "npm:@vitejs/plugin-react@4.2.1",
+    "react": "npm:react@18.2.0",
+    "react-dom": "npm:react-dom@18.2.0",
+    "@types/react": "npm:@types/react@18.2.61",
+    "@types/react-dom": "npm:@types/react-dom@18.2.19",
+    "chrome-types": "npm:@types/chrome"
+  }
+}
