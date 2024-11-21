@@ -1,19 +1,12 @@
+import { fetchChangeInfo } from "../shared/hotReload/utils.ts";
+import type { ChangeInfo } from "../shared/hotReload/types.ts";
+
 /**
  * Content script definition from the manifest.json file
  */
 interface ContentScript {
   matches: string[];
   js: string[];
-}
-
-/**
- * Parsed change info from the reload-signal.js file
- */
-interface ChangeInfo {
-  hasBackgroundChanges: boolean;
-  hasContentChanges: boolean;
-  hasPopupChanges: boolean;
-  timestamp: number;
 }
 
 let lastReloadTime = Date.now();
@@ -57,31 +50,6 @@ async function checkForChanges() {
 }
 
 /**
- * Fetches the change info from the reload-signal.js file.
- * This file is injected into the extension by the build process and contains list of changed files.
- */
-async function fetchChangeInfo(): Promise<ChangeInfo | null> {
-  try {
-    const response = await fetch(chrome.runtime.getURL("reload-signal.js"));
-    const content = await response.text();
-
-    const matches = content.match(/\/\/ (\d+) \[(.*?)\]/);
-    if (!matches) return null;
-
-    const [, timestamp, changedFiles] = matches;
-    return {
-      timestamp: parseInt(timestamp),
-      hasBackgroundChanges: changedFiles.includes("background/"),
-      hasContentChanges: changedFiles.includes("content/"),
-      hasPopupChanges: changedFiles.includes("popup/"),
-    };
-  } catch (error) {
-    console.error("[HOT RELOAD] Error fetching change info:", error);
-    return null;
-  }
-}
-
-/**
  * Handles the hot reload logic
  */
 async function handleChanges(changes: ChangeInfo) {
@@ -93,9 +61,12 @@ async function handleChanges(changes: ChangeInfo) {
 
   lastReloadTime = changes.timestamp;
 
-  if (changes.hasBackgroundChanges || changes.hasContentChanges) {
+  if (
+    changes.hasBackgroundChanges || changes.hasContentChanges ||
+    changes.hasDevToolsChanges
+  ) {
     await showReloadIndicator("↻");
-    // For both background and content changes, we reload the extension
+    // For background, content, or devtools changes, we reload the extension
     // Content script reloading will be handled by onInstalled listener
     chrome.runtime.reload();
   } else {
@@ -153,8 +124,14 @@ async function getContentScriptMatches(): Promise<string[]> {
  * Shows the reload indicator as a badge on the extension icon
  */
 const showReloadIndicator = async (text: string) => {
+  const previousText = await chrome.action.getBadgeText({});
+
   await chrome.action.setBadgeText({ text });
   await chrome.action.setBadgeBackgroundColor({ color: "#4CAF50" });
+
+  setTimeout(() => {
+    chrome.action.setBadgeText({ text: previousText });
+  }, 2000);
 };
 
 /**

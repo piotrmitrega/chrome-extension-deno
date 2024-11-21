@@ -9,13 +9,20 @@ const staticFiles: StaticFile[] = [
   { from: "manifest.json" },
   { from: "popup/index.html" },
   { from: "assets/icons" },
+  { from: "devtools/devtools.html" },
+  { from: "devtools/panel.html" },
 ];
 
 const entryPoints = {
   background: "background/index.ts",
   content: "content/index.tsx",
   popup: "popup/index.tsx",
-  ...(isWatch && { popupHotReload: "popup/hotReload.ts" }),
+  devtools: "devtools/index.ts",
+  devtoolsPanel: "devtools/panel.tsx",
+  ...(isWatch && { 
+    popupHotReload: "popup/hotReload.ts",
+    devtoolsHotReload: "devtools/hotReload.ts" 
+  }),
 };
 
 const config = {
@@ -32,8 +39,10 @@ if (isWatch) {
     "./background",
     "./content",
     "./popup",
+    "./devtools",
+    "./shared",
     "./manifest.json",
   ];
 
-  await watchFiles(watchPaths);
+  await watchFiles(watchPaths, config);
 }

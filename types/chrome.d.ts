@@ -1,1 +1,1 @@
-declare module "chrome-types";
+/// <reference types="chrome-types" />

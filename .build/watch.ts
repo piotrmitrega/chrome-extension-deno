@@ -2,7 +2,7 @@ import { buildExtension } from "./build.ts";
 
 let rebuildTimeout: number | undefined;
 
-export async function watchFiles(watchPaths: string[]) {
+export async function watchFiles(watchPaths: string[], config: BuildConfig) {
   const watcher = Deno.watchFs(watchPaths);
 
   console.log("Watching for changes...");
@@ -16,7 +16,7 @@ export async function watchFiles(watchPaths: string[]) {
       rebuildTimeout = setTimeout(async () => {
         console.log("Rebuilding...");
 
-        await buildExtension(event.paths);
+        await buildExtension(config);
         await triggerExtensionReload(event.paths);
       }, 100);
     }

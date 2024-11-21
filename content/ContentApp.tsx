@@ -6,7 +6,7 @@ const styles: Record<string, React.CSSProperties> = {
     top: "20px",
     right: "20px",
     padding: "10px 20px",
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    backgroundColor: "rgba(0, 0, 0, 0.8) !important",
     color: "white",
     borderRadius: "5px",
     border: "2px solid #ff0000",
@@ -25,6 +25,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
     paddingBottom: "8px",
+    backgroundColor: "transparent !important",
   },
   closeButton: {
     background: "none",
